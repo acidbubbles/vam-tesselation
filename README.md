@@ -1,17 +1,8 @@
-# Virt-A-Mate Body Shader Plugin
+# Virt-A-Mate Automatic Body Smoother
 
-Apply any shader to actors in Virt-A-Mate!
+This repository is for collaborative work with [Hunting-Succubus](https://www.patreon.com/HunTingSuccuBus) on [Automatic Body Smoother](https://hub.virtamate.com/resources/automaticbodysmoother-season-plugin.5235/).
 
-**This plugin has been abandoned. VaM uses shaders to actually place people on the screen, so fiddling with it breaks movement completely. It'll only work with the T-pose, and even then will not work very well.**
-
-## About
-
-When I made the [improved-pov](https://github.com/acidbubbles/vam-improved-pov), I played a lot with transparency while testing. But Skeet actually saw something I did not: goo girls! So while explaining how the technique could be applied to any imported shaders, I decided against my sanity to try and make this an easy base plugin to experiment with.
-
-## Credits
-
-- See the original plugin's [credits](https://github.com/acidbubbles/vam-improved-pov#credits)
-- Skeet, for taking the time to prove the concept, find the missing pieces for the body and sharing back what he did!
+It also includes the history from the previous [Female Body Smoother Tessellation](https://hub.virtamate.com/resources/female-body-smoother-tessellation.892/) plugin and [Body Shader](https://github.com/acidbubbles/vam-body-shader) experiment.
 
 ## License
 
