@@ -23,12 +23,6 @@ namespace HuntingSuccubus
         {
             try
             {
-                // put init code in here
-                //SuperController.LogMessage("Template Loaded");
-
-                // create custom JSON storable params here if you want them to be stored with scene JSON
-                // types are JSONStorableFloat, JSONStorableBool, JSONStorableString, JSONStorableStringChooser
-                // JSONStorableColor
                 Tess = new JSONStorableFloat("Tess", 3.35f, 1.0f, 8.0f, true, true);
                 RegisterFloat(Tess);
                 CreateSlider(Tess, false);
@@ -47,19 +41,6 @@ namespace HuntingSuccubus
             }
         }
 
-        // Start is called once before Update or FixedUpdate is called and after Init()
-        void Start()
-        {
-            try
-            {
-
-            }
-            catch (Exception e)
-            {
-                SuperController.LogError("Exception caught: " + e);
-            }
-        }
-
         void Update()
         {
             try
@@ -68,11 +49,8 @@ namespace HuntingSuccubus
                 {
                     foreach (Atom atom in FindObjectsOfType(typeof(Atom)))
                     {
-                        //SuperController.LogMessage("atom="+atom.name+" atomtype="+atom.type);
                         if (atom.type == "Person")
                         {
-                            //SuperController.LogMessage("-----------AtomType=Person Found------------");
-
                             _person = atom;
                             _selector = _person.GetComponentInChildren<DAZCharacterSelector>();
                             _character = _selector.selectedCharacter;
@@ -81,7 +59,6 @@ namespace HuntingSuccubus
                             Material[] mats = skin.GPUmaterials;
                             foreach (Material mat in mats)
                             {
-                                //SuperController.LogMessage("-----------Material Found------------"+mat.name);
                                 if (mat != null && mat.name != "EyeReflection-1" && mat.name != "EyeReflection" && mat.name != "Irises" && mat.name != "Irises-1" && mat.name != "Eyelashes" && mat.name != "Eyelashes-1" && mat.name != "Cornea-1" && mat.name != "Cornea" && mat.name != "Sclera-1" && mat.name != "Sclera" && mat.name != "Pupils-1" && mat.name != "Pupils" && mat.name != "Tear" && mat.name != "Tear-1" && mat.name != "Teeth-1" && mat.name != "Teeth" && mat.name != "Tongue" && mat.name != "Tongue-1" && mat.name != "InnerMouth-1" && mat.name != "InnerMouth")
                                 {
                                     if (mat.shader.name != "Custom/Subsurface/TransparentGlossNMNoCullSeparateAlphaComputeBuff")
@@ -102,28 +79,6 @@ namespace HuntingSuccubus
             {
                 SuperController.LogError("Exception caught: " + e);
             }
-        }
-
-        void FixedUpdate()
-        {
-            try
-            {
-                {
-                    foreach (ParticleSystem mat in FindObjectsOfType(typeof(ParticleSystem)))
-                    {
-                        //var coll = mat.collision;
-                        //coll.enabled = false;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                SuperController.LogError("Exception caught: " + e);
-            }
-        }
-
-        void OnDestroy()
-        {
         }
     }
 }
