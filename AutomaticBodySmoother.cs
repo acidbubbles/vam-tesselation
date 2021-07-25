@@ -13,12 +13,8 @@ namespace HuntingSuccubus
         protected JSONStorableFloat Tess;
         protected JSONStorableFloat TessPhong;
         protected JSONStorableFloat ScanTiming;
-
-        private Atom _person;
-        private DAZCharacterSelector _selector;
-        private bool _dirty;
-        private DAZCharacter _character;
         protected int timer = 1;
+
         public override void Init()
         {
             try
@@ -51,10 +47,10 @@ namespace HuntingSuccubus
                     {
                         if (atom.type == "Person")
                         {
-                            _person = atom;
-                            _selector = _person.GetComponentInChildren<DAZCharacterSelector>();
-                            _character = _selector.selectedCharacter;
-                            var skin = _character.skin;
+                            var person = atom;
+                            var selector = person.GetComponentInChildren<DAZCharacterSelector>();
+                            var character = selector.selectedCharacter;
+                            var skin = character.skin;
                             if (skin == null) return;
                             Material[] mats = skin.GPUmaterials;
                             foreach (Material mat in mats)
