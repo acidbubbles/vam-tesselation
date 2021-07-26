@@ -26,7 +26,7 @@ namespace HuntingSuccubus
             }
             catch (Exception e)
             {
-                SuperController.LogError("Exception caught: " + e);
+                SuperController.LogError("AutomaticBodySmoother failed to initialize: " + e);
             }
         }
 
@@ -36,14 +36,11 @@ namespace HuntingSuccubus
             {
                 if (_timer >= _scanTiming.val)
                 {
-                    foreach (Atom atom in FindObjectsOfType(typeof(Atom)))
+                    foreach (var atom in SuperController.singleton.GetAtoms())
                     {
                         if (atom.type != "Person") continue;
                         var selector = atom.GetComponentInChildren<DAZCharacterSelector>();
-                        var character = selector.selectedCharacter;
-                        var skin = character.skin;
-                        if (skin == null) return;
-                        foreach (var mat in skin.GPUmaterials)
+                        foreach (var mat in selector.selectedCharacter.skin.GPUmaterials)
                         {
                             if (mat != null && mat.name != "EyeReflection-1" && mat.name != "EyeReflection" && mat.name != "Irises" && mat.name != "Irises-1" && mat.name != "Eyelashes" && mat.name != "Eyelashes-1" && mat.name != "Cornea-1" && mat.name != "Cornea" && mat.name != "Sclera-1" && mat.name != "Sclera" && mat.name != "Pupils-1" && mat.name != "Pupils" && mat.name != "Tear" && mat.name != "Tear-1" && mat.name != "Teeth-1" && mat.name != "Teeth" && mat.name != "Tongue" && mat.name != "Tongue-1" && mat.name != "InnerMouth-1" && mat.name != "InnerMouth")
                             {
@@ -54,7 +51,7 @@ namespace HuntingSuccubus
                                 mat.SetFloat("_Tess", _tess.val);
                             }
                         }
-                        skin.BroadcastMessage("OnApplicationFocus", true);
+                        selector.selectedCharacter.skin.BroadcastMessage("OnApplicationFocus", true);
                     }
                     _timer = 0;
                 }
@@ -62,7 +59,8 @@ namespace HuntingSuccubus
             }
             catch (Exception e)
             {
-                SuperController.LogError("Exception caught: " + e);
+                SuperController.LogError("AutomaticBodySmoother failed to update: " + e);
+                enabledJSON.val = false;
             }
         }
     }
