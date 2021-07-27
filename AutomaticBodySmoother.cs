@@ -170,16 +170,26 @@ namespace HuntingSuccubus
             _watchers.Clear();
         }
 
+        private IEnumerator DelayedApplyCo(PersonWatcher watcher)
+        {
+            yield return 0;
+            while (SuperController.singleton.isLoading)
+                yield return 0;
+            watcher.Apply();
+        }
+
         private IEnumerator PeriodicApplyCo()
         {
-            while (enabled)
+            yield return 0;
+            while (enabledJSON.val)
             {
-                yield return new WaitForSeconds(1f);
+                while (SuperController.singleton.isLoading)
+                    yield return 0;
 
                 for (var i = 0; i < _watchers.Count; i++)
-                {
                     _watchers[i].Apply();
-                }
+
+                yield return new WaitForSeconds(1f);
             }
         }
 
@@ -196,7 +206,7 @@ namespace HuntingSuccubus
             if (person.gameObject.GetComponent<PersonWatcher>() != null) return;
             var watcher = person.gameObject.AddComponent<PersonWatcher>();
             _watchers.Add(watcher);
-            watcher.Apply();
+            StartCoroutine(DelayedApplyCo(watcher));
         }
 
         public bool TryGetPolicy(string materialName, out string policy)
@@ -230,13 +240,12 @@ namespace HuntingSuccubus
         {
             if (!ReferenceEquals(_currentSkin, null) && _selector.selectedCharacter.skin == _currentSkin) return;
             Restore();
-            _currentSkin = _selector.selectedCharacter.skin;
+            // ReSharper disable once Unity.NoNullPropagation
+            _currentSkin = _selector.selectedCharacter?.skin;
             if (_currentSkin == null) return;
             foreach (var mat in _currentSkin.GPUmaterials)
-            {
                 ApplyMaterial(mat);
-            }
-            _selector.selectedCharacter.skin.BroadcastMessage("OnApplicationFocus", true);
+            _currentSkin.BroadcastMessage("OnApplicationFocus", true);
         }
 
         private void ApplyMaterial(Material mat)
