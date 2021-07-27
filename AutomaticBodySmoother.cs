@@ -22,37 +22,6 @@ namespace HuntingSuccubus
         public JSONStorableBool colorizeJSON { get; private set; }
 
         private List<JSONStorableStringChooser> materialPolicies { get; set; }
-
-        private JSONStorableStringChooser CreateMaterialJSON(string materialName, bool masked = false, bool active = false, bool editable = true, string label = null)
-        {
-            List<string> choices;
-            string defaultValue;
-            if (!editable)
-            {
-                choices = new List<string> {NotTessellatedValue};
-                defaultValue = NotTessellatedValue;
-            }
-            else if (masked)
-            {
-                choices = new List<string> {TessellatedMaskValue, TessellatedNoMaskValue, NotTessellatedValue};
-                defaultValue = active ? TessellatedNoMaskValue : NotTessellatedValue;
-            }
-            else
-            {
-                choices = new List<string> {TessellatedValue, NotTessellatedValue};
-                defaultValue = active ? TessellatedValue : NotTessellatedValue;
-            }
-
-            var jss = new JSONStorableStringChooser(
-                materialName,
-                choices,
-                defaultValue,
-                materialName,
-                (string _) => ReapplyAll());
-            if (label != null) jss.label = label;
-            return jss;
-        }
-
         private readonly List<PersonWatcher> _watchers = new List<PersonWatcher>();
         private Atom _personAtom;
 
@@ -76,7 +45,9 @@ namespace HuntingSuccubus
                     CreateMaterialJSON("Torso", masked: true, active: true),
                     CreateMaterialJSON("Nipples", active: true),
                     CreateMaterialJSON("Hips", masked: true, active: true),
-                    CreateMaterialJSON("defaultMat", active: true, label: "Gens"),
+                    CreateMaterialJSON("defaultMat", active: true, label: "Gens (Female)"),
+                    CreateMaterialJSON("Genitalia", active: true, label: "Gens (Male)"),
+                    CreateMaterialJSON("Anus", active: true, label: "Anus (Male)"),
                     CreateMaterialJSON("Legs", masked: true, active: true),
                     CreateMaterialJSON("Feet", active: true),
                     CreateMaterialJSON("Hips", masked: true, active: true),
@@ -121,6 +92,37 @@ namespace HuntingSuccubus
             {
                 SuperController.LogError("AutomaticBodySmoother failed to initialize: " + e);
             }
+        }
+
+        private JSONStorableStringChooser CreateMaterialJSON(string materialName, bool masked = false, bool active = false, bool editable = true, string label = null)
+        {
+            List<string> choices;
+            string defaultValue;
+            if (!editable)
+            {
+                choices = new List<string> {NotTessellatedValue};
+                defaultValue = NotTessellatedValue;
+            }
+            else if (masked)
+            {
+                choices = new List<string> {TessellatedMaskValue, TessellatedNoMaskValue, NotTessellatedValue};
+                defaultValue = active ? TessellatedNoMaskValue : NotTessellatedValue;
+            }
+            else
+            {
+                choices = new List<string> {TessellatedValue, NotTessellatedValue};
+                defaultValue = active ? TessellatedValue : NotTessellatedValue;
+            }
+
+            var jss = new JSONStorableStringChooser(
+                materialName,
+                choices,
+                defaultValue,
+                materialName,
+                (string _) => ReapplyAll());
+            if (label != null) jss.label = label;
+            jss.defaultVal = ""; // To force saving
+            return jss;
         }
 
         private void ReapplyAll()
@@ -250,6 +252,7 @@ namespace HuntingSuccubus
 
         private void ApplyMaterial(Material mat)
         {
+            if (mat == null) return;
             string policy;
             if (!AutomaticBodySmoother.instance.TryGetPolicy(mat.name, out policy))
             {
@@ -270,7 +273,7 @@ namespace HuntingSuccubus
             };
             _materialSnapshots.Add(snapshot);
             mat.shader = _tessShader;
-            if (policy == AutomaticBodySmoother.TessellatedNoMaskValue)
+            if (policy != AutomaticBodySmoother.TessellatedMaskValue)
                 mat.SetTexture("_TessTex", Texture2D.whiteTexture);
             mat.SetFloat("_TessPhong", AutomaticBodySmoother.instance.tessPhongJSON.val);
             mat.SetFloat("_Tess", AutomaticBodySmoother.instance.tessJSON.val);
