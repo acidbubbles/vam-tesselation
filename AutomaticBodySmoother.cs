@@ -288,6 +288,11 @@ namespace HuntingSuccubus
 
         public void Restore()
         {
+            if (_currentSkin == null)
+            {
+                _materialSnapshots.Clear();
+                return;
+            }
             foreach (var materialSnapshot in _materialSnapshots.Where(materialSnapshot => materialSnapshot.material != null))
             {
                 materialSnapshot.material.shader = materialSnapshot.shader;
@@ -296,8 +301,8 @@ namespace HuntingSuccubus
                 materialSnapshot.material.SetFloat("_Tess", materialSnapshot.tess);
                 if (materialSnapshot.colorized) materialSnapshot.material.SetColor("_Color", materialSnapshot.color);
             }
-
             _materialSnapshots.Clear();
+            _currentSkin.BroadcastMessage("OnApplicationFocus", true);
             _currentSkin = null;
         }
 
