@@ -234,33 +234,39 @@ namespace HuntingSuccubus
             if (_currentSkin == null) return;
             foreach (var mat in _currentSkin.GPUmaterials)
             {
-                string policy;
-                if (!AutomaticBodySmoother.instance.TryGetPolicy(mat.name, out policy))
-                {
-                    SuperController.LogError($"Could not find any policy for material {mat.name}");
-                    continue;
-                }
-                if (policy == AutomaticBodySmoother.NotTessellatedValue) continue;
-                var snapshot = new MaterialSnapshot
-                {
-                    material = mat,
-                    shader = mat.shader,
-                    tess = mat.GetFloat("_Tess"),
-                    tessPhong = mat.GetFloat("_TessPhong"),
-                    color = mat.GetColor("_Color"),
-                    colorized = AutomaticBodySmoother.instance.colorizeJSON.val,
-                    tessTex = mat.GetTexture("_TessTex")
-                };
-                _materialSnapshots.Add(snapshot);
-                mat.shader = _tessShader;
-                if (policy == AutomaticBodySmoother.TessellatedNoMaskValue)
-                    mat.SetTexture("_TessTex", Texture2D.whiteTexture);
-                mat.SetFloat("_TessPhong", AutomaticBodySmoother.instance.tessPhongJSON.val);
-                mat.SetFloat("_Tess", AutomaticBodySmoother.instance.tessJSON.val);
-                if (AutomaticBodySmoother.instance.colorizeJSON.val)
-                    mat.SetColor("_Color", Color.red);
+                ApplyMaterial(mat);
             }
             _selector.selectedCharacter.skin.BroadcastMessage("OnApplicationFocus", true);
+        }
+
+        private void ApplyMaterial(Material mat)
+        {
+            string policy;
+            if (!AutomaticBodySmoother.instance.TryGetPolicy(mat.name, out policy))
+            {
+                SuperController.LogError($"Could not find any policy for material {mat.name}");
+                return;
+            }
+
+            if (policy == AutomaticBodySmoother.NotTessellatedValue) return;
+            var snapshot = new MaterialSnapshot
+            {
+                material = mat,
+                shader = mat.shader,
+                tess = mat.GetFloat("_Tess"),
+                tessPhong = mat.GetFloat("_TessPhong"),
+                color = mat.GetColor("_Color"),
+                colorized = AutomaticBodySmoother.instance.colorizeJSON.val,
+                tessTex = mat.GetTexture("_TessTex")
+            };
+            _materialSnapshots.Add(snapshot);
+            mat.shader = _tessShader;
+            if (policy == AutomaticBodySmoother.TessellatedNoMaskValue)
+                mat.SetTexture("_TessTex", Texture2D.whiteTexture);
+            mat.SetFloat("_TessPhong", AutomaticBodySmoother.instance.tessPhongJSON.val);
+            mat.SetFloat("_Tess", AutomaticBodySmoother.instance.tessJSON.val);
+            if (AutomaticBodySmoother.instance.colorizeJSON.val)
+                mat.SetColor("_Color", Color.red);
         }
 
         private void OnDisable()
